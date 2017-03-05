@@ -23,5 +23,8 @@ Ritmo player for wordpress
 3. Widget in admin.
 
 == Changelog ==
+= 1.0.1 =
+* Update ritmo embed structure
+
 = 1.0 =
 * Start plugin
