@@ -1,17 +1,20 @@
 <?php
+
 /**
  * Adds Ritmo_Widget widget.
  */
-class Ritmo_Widget extends WP_Widget {
+class Ritmo_Widget extends WP_Widget
+{
 
 	/**
 	 * Register widget with WordPress.
 	 */
-	function __construct() {
+	function __construct()
+	{
 		parent::__construct(
 			'ritmo_widget',
-			__( 'Ritmo', 'ritmo' ),
-			array( 'description' => __( 'Ritmo widget', 'ritmo' ), )
+			__('Ritmo', 'ritmo'),
+			array('description' => __('Ritmo widget', 'ritmo'),)
 		);
 	}
 
@@ -20,19 +23,22 @@ class Ritmo_Widget extends WP_Widget {
 	 *
 	 * @see WP_Widget::widget()
 	 *
-	 * @param array $args     Widget arguments.
+	 * @param array $args Widget arguments.
 	 * @param array $instance Saved values from database.
 	 */
-	public function widget( $args, $instance ) {
+	public function widget($args, $instance)
+	{
 		echo $args['before_widget'];
-		if ( ! empty( $instance['title'] ) ) {
-			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ). $args['after_title'];
+		if (!empty($instance['title'])) {
+			echo $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
 		}
-		
-		if( isset($instance['url']) ) {
 
-			$ritmo_url = rtrim($instance['url'], '/');
-			echo '<iframe src="'.$ritmo_url.'/embed" style="border:none" width="300" height="379"></iframe>';
+		if (isset($instance['url'])) {
+
+			$ritmo_url = parse_url($instance['url']);
+			$embed_url = 'http://embed.ritmo.ir' . $ritmo_url['path'];
+
+			echo '<iframe src="' . $embed_url . '" style="border:none" width="300" height="379"></iframe>';
 		}
 
 		echo $args['after_widget'];
@@ -44,11 +50,13 @@ class Ritmo_Widget extends WP_Widget {
 	 * @see WP_Widget::form()
 	 *
 	 * @param array $instance Previously saved values from database.
+	 * @return string|void
 	 */
-	public function form( $instance ) {
-		$title = ! empty( $instance['title'] ) ? $instance['title'] : __( 'Ritmo player', 'ritmo' );
-		$url = ! empty( $instance['url'] ) ? $instance['url'] : '';
-		include dirname( __FILE__ ) . "/templates/ritmo-widget.php";
+	public function form($instance)
+	{
+		$title = !empty($instance['title']) ? $instance['title'] : __('Ritmo player', 'ritmo');
+		$url = !empty($instance['url']) ? $instance['url'] : '';
+		include dirname(__FILE__) . "/templates/ritmo-widget.php";
 	}
 
 	/**
@@ -61,10 +69,11 @@ class Ritmo_Widget extends WP_Widget {
 	 *
 	 * @return array Updated safe values to be saved.
 	 */
-	public function update( $new_instance, $old_instance ) {
+	public function update($new_instance, $old_instance)
+	{
 		$instance = array();
-		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-		$instance['url'] = ( ! empty( $new_instance['url'] ) ) ? $new_instance['url'] : '';
+		$instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+		$instance['url'] = (!empty($new_instance['url'])) ? $new_instance['url'] : '';
 
 		return $instance;
 	}
@@ -72,7 +81,9 @@ class Ritmo_Widget extends WP_Widget {
 }
 
 // register widget
-function register_ritmo_widget() {
-    register_widget( 'Ritmo_Widget' );
+function register_ritmo_widget()
+{
+	register_widget('Ritmo_Widget');
 }
-add_action( 'widgets_init', 'register_ritmo_widget' );
+
+add_action('widgets_init', 'register_ritmo_widget');
